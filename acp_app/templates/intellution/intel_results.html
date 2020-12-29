@@ -1,0 +1,34 @@
+{% extends "shared/_layout.html" %}
+{% block title %} ACP - Intellution {% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dataframe.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Intellution Database</h1>
+    <div class="row">
+        <div class="col-sm-8">
+            <form method="POST">
+                {{ intel_form.hidden_tag() }}
+                <div class="input-group mb-3">
+                    {{ intel_form.search(class="form-control", placeholder="Search the database") }}
+                    <div class=input-group-append>
+                        {{ intel_form.column_to_search(class="btn-outline-secondary dropdown-toggle") }}
+                        {{ intel_form.submit(class="btn btn-primary") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+    <h3>Intellution Results Table</h3>
+    <p><strong>{{ intel_len }}</strong><em> Results found for {{ intel_search }} in
+            {{ intel_col }}</em></p>
+</div>
+<div class="container-fluid">
+    {{ intellution_table | safe }}
+</div>
+
+{% endblock %}

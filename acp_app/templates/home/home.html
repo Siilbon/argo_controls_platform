@@ -1,0 +1,76 @@
+{% extends "shared/_layout.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cards.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <row>
+        <h1>Argo Controls Platform</h1>
+        <p>This web app is a collection of utilities designed to improve transparency into the Argo control systems.
+            It's implemented in Python using the <a href="https://flask.palletsprojects.com/">Flask</a> application
+            framework, and it's entirely open source.</p>
+    </row>
+    <row>
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Intellution</h4>
+                <p class="card-text">Argo HMI database
+                </p>
+                <div class="col-sm-8">
+                    <form method="POST">
+                        {{ intel_form.hidden_tag() }}
+                        <div class="input-group mb-3">
+                            {{ intel_form.search(class="form-control", placeholder="e.g. V48123") }}
+                            <div class=input-group-append>
+                                {{ intel_form.column_to_search(class="btn-outline-secondary dropdown-toggle") }}
+                                {{ intel_form.submit(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-4"></div>
+            </div>
+        </div>
+    </row>
+    <row>
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Aspen</h4>
+                <p class="card-text">Argo process historian</p>
+                <div class="col-sm-8">
+                    <form method="POST">
+                        <div class="input-group mb-3">
+                            {{ aspen_form.hidden_tag() }}
+                            {{ aspen_form.search(class="form-control", placeholder="e.g. FinOil") }}
+                            <div class=input-group-append>
+                                {{ aspen_form.submit(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-4"></div>
+            </div>
+        </div>
+    </row>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="card-deck mx-auto">
+            {% for member in team %}
+            <div class="card" style="min-width: 150px;">
+                <div class="card-body">
+                    <h4 class="card-title"><a href="mailto:{{ member['email'] }}">{{ member['name'] }}</a></h4>
+                    <p class="card-text">{{ member['role'] }}</p>
+                </div>
+                <div class='card-footer'>
+                    {% for unit in member.units.all() %}{{unit.name}}<br>{% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

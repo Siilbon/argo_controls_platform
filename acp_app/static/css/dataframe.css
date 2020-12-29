@@ -1,0 +1,10 @@
+table.dataframe thead tr th {
+    text-align: center;
+    position: sticky;
+    top: 0;
+    background-color: whitesmoke;
+}
+
+table.dataframe tbody tr {
+    white-space: nowrap;
+}

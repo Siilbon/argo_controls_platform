@@ -1,0 +1,35 @@
+{% extends "shared/_layout.html" %}
+{% block title %} ACP - Aspen {% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dataframe.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Aspen Database</h1>
+    <div class="row">
+        <div class="col-sm-8">
+            <form method="POST">
+                <div class="input-group mb-3">
+                    {{ aspen_form.hidden_tag() }}
+                    {{ aspen_form.search(class="form-control", placeholder="Search the database") }}
+                    <div class=input-group-append>
+                        {{ aspen_form.submit(class="btn btn-primary") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+</div>
+<div class="container">
+    <h3>Aspen IOGetHistDef Results Table</h3>
+    {{ aspen_io_table | safe }}
+</div>
+
+<div class="container-fluid">
+    <h3>Aspen IP_AnalogDef Results Table</h3>
+    {{ aspen_ip_table | safe }}
+</div>
+{% endblock %}

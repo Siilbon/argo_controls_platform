@@ -1,0 +1,60 @@
+{% extends "shared/_layout.html" %}
+{% block title %} ACP - GCC {% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dataframe.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>GCC End of Step Translator</h1>
+    <p>
+        {% if eos_message %}{{ eos_message }}{% endif %}
+    </p>
+    <div class="row">
+        <div class="col-md-8">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group row">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <label
+                        class="col-md-4 col-form-label col-form-label-md text-right">{{ form.eos_type.label }}</label>
+                    <div class="col-md-4"> {{ form.eos_type(class='form-control form-control-md') }} </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label col-form-label-md">{{ form.eos_mod1.label }}</label>
+                    <div class="col-md-9"> {{ form.eos_mod1(class='form-control form-control-md') }} </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label col-form-label-md">{{ form.eos_mod2.label }}</label>
+                    <div class="col-md-9"> {{ form.eos_mod2(class='form-control form-control-md') }} </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label col-form-label-md">{{ form.eos_mod3.label }}</label>
+                    <div class="col-md-9"> {{ form.eos_mod3(class='form-control form-control-md') }} </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label col-form-label-md">{{ form.eos_mod4.label }}</label>
+                    <div class="col-md-9"> {{ form.eos_mod4(class='form-control form-control-md') }} </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label col-form-label-md">{{ form.eos_mod5.label }}</label>
+                    <div class="col-md-9"> {{ form.eos_mod5(class='form-control form-control-md') }} </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label col-form-label-md">{{ form.eos_mod6.label }}</label>
+                    <div class="col-md-9"> {{ form.eos_mod6(class='form-control form-control-md') }} </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label col-form-label-md">{{ form.eos_mod7.label }}</label>
+                    <div class="col-md-9"> {{ form.eos_mod7(class='form-control form-control-md') }} </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label col-form-label-md">{{ form.eos_mod8.label }}</label>
+                    <div class="col-md-9"> {{ form.eos_mod8(class='form-control form-control-md') }} </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
