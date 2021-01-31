@@ -130,3 +130,5 @@ dmypy.json
 
 # Argo Controls Platform 
 acp_app/data/
+.vscode/
+.DS_Store

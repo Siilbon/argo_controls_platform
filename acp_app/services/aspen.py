@@ -79,6 +79,17 @@ class AspenConn:
 
         return df
 
+    def iostatus(self):
+        '''Get the IOGetHistDef table overview of good and bad tags from the different sources
+        '''
+        sql_query = f'''
+        SELECT *
+        FROM IOGetHistDef
+        '''
+        df = pd.read_sql(sql_query, self.conn)
+
+        return df
+
     def query(self, query):
         df = pd.read_sql(query, self.conn)
         return df
@@ -92,4 +103,3 @@ class AspenConn:
             tag_list = f"{tuple(tag_list)}"
 
         return tag_list
-

@@ -22,6 +22,8 @@ def parse_discrete_io(word_num, bit_num, state_num):
     else:
         rack_num = word_num // 10
         mod_num = word_num % 10
+        if bit_num > 7:
+            bit_num -= 2
         input_text = f'rack {rack_num} mod {mod_num} bit {bit_num} (Real_Inputs[{word_num}].{bit_num})'
 
     parsed_discrete_io = namedtuple('io', ['address', 'state'])
