@@ -25,6 +25,10 @@ This tool is a Flask app for sharing python utilities using a user friendly web 
 ```
 ## Command Line Commands
 
+First activate the virtual environment (.venv) by opening the command prompt and running the following command:
+
+`>cd C:\argo_controls_platform\.venv\Scripts & activate & cd C:\argo_controls_platform\`
+
 To update the intellution database just put the new files under acp_app/data/raw/intellution and run:
 
 `(.venv)$ flask intellution init`
