@@ -172,9 +172,10 @@ class TruthtableDB():
             devtags = [str(i) for i in rawdev]
             devtags = [item.strip() for item in devtags]
             devtags = list(filter(None, devtags))
-            true_devices.append(devtags)
 
-        true_devices = str(true_devices)
+            # need a list of strings
+            true_devices.append(str(devtags))
+
         return true_devices
 
     # Parses the given truthtable to return all devices the are in the Off/False state
@@ -201,12 +202,4 @@ class TruthtableDB():
                                      'name', 'seq', 'step_num', 'step_name',
                                      'eos_cond', 'next_step', 'true_dev'
                                  ])
-
-        # parsed_tt = pd.DataFrame(list(zip(self.seq, self.step_name,
-        #                                 self.eos_english, self.next_steps,
-        #                                 self.true_devices, self.false_devices)),
-        #                                 columns=['Step Number', 'Step Name',
-        #                                 'End of Step Conditions', 'Next Step',
-        #                                 'Open/On', 'Closed/Off'])
-
         return parsed_tt

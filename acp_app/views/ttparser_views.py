@@ -21,20 +21,24 @@ class TruthtableParseForm(FlaskForm):
 bp = Blueprint('ttparser', __name__)
 
 
-@bp.route('/truthtable_parser/<ttname>/<seqnum>',
-          methods=['GET', 'POST'])
+@bp.route('/truthtable_parser/<ttname>/<seqnum>', methods=['GET', 'POST'])
 def ttparse(ttname, seqnum):
     # initialize
     tt_table = pd.DataFrame()
     SortError = False
 
     try:
-        tt_query = (select([Truthtables
-                            ]).where(Truthtables.name == f'{ttname}').where(
-                                Truthtables.seq == seqnum))
+        tt_query = (select([
+            Truthtables
+        ]).where(Truthtables.name == f'{ttname.upper()}').where(
+            Truthtables.seq == seqnum))
 
         tt_table = pd.read_sql(tt_query, db.engine)
         tt_table = tt_table.drop('idx', axis=1)
+        tt_table = tt_table[[
+            'name', 'seq', 'step_num', 'next_step', 'step_name', 'eos_cond',
+            'true_dev'
+        ]]
         tt_table = tt_table.rename(
             columns={
                 'name': 'Truthtable',
