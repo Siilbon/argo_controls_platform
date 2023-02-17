@@ -67,7 +67,7 @@ def home():
                            team=team)
 
 
-@bp.cli.command('init_team')
+@bp.cli.command('init')
 def init_team():
     controls_team = pd.read_csv(
         filepath_or_buffer='acp_app/data/raw/team/teammates.csv')

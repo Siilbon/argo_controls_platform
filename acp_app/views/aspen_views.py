@@ -53,31 +53,19 @@ def aspen_search(search_term):
 @bp.route('/aspen_status')
 def aspen_status():
     aspen_server = current_app.config.get('ASPEN_SERVER')
-    # try:
-    #     aspen_conn = AspenConn(aspen_server, '')
+    try:
+        aspen_conn = AspenConn(aspen_server, '')
 
-    #     aspen_status_table = render_dataframe(aspen_conn.iostatus(),
-    #                                           bootstrap_table=True)
-    # except:
-    #     raise AspenConnectionError(server=aspen_server,
-    #                                message='''Unable to connect to server.''')
-    aspen_status_table = pd.DataFrame({
-        "name": ["provox", "deltav", "foxboro", "other deltav"],
-        "good": [10, 300, 200, 510],
-        "bad": [490, 23, 34, 53]
-    })
+        aspen_status_table = render_dataframe(aspen_conn.iostatus(),
+                                              bootstrap_table=True)
 
-    def highlight_max(s):
-        '''
-        highlight the maximum in a Series yellow.
-        '''
-        is_max = s == s.max()
-        return ['background-color: yellow' if v else '' for v in is_max]
-
-    # aspen_status_table = aspen_status_table.style.apply(highlight_max).render()
-
-    aspen_status_table = render_dataframe(aspen_status_table,
-                                          bootstrap_table=True)
-
-    return render_template('aspen/aspen_status.html',
+        return render_template('aspen/aspen_status.html',
                            aspen_status_table=aspen_status_table)
+
+    except:
+        raise AspenConnectionError(server=aspen_server,
+                                   message='''Unable to connect to server.''')
+
+    
+
+    

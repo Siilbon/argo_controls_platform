@@ -83,8 +83,13 @@ class AspenConn:
         '''Get the IOGetHistDef table overview of good and bad tags from the different sources
         '''
         sql_query = f'''
-        SELECT *
+        SELECT IO_MAIN_TASK,
+            SUM(IO_#TAGS) as Total_Tags,
+            (SUM(IO_#_BAD_TAGS) - SUM(IO_#_SCAN_OFF_TAGS)) * 100 / Total_Tags as %Bad_Tags,
+            SUM(IO_#_GOOD_TAGS) * 100 / Total_Tags as %Good_Tags
         FROM IOGetHistDef
+        GROUP BY IO_MAIN_TASK
+        ORDER BY %Bad_Tags DESC
         '''
         df = pd.read_sql(sql_query, self.conn)
 

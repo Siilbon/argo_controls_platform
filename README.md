@@ -35,7 +35,11 @@ To update the intellution database just put the new files under acp_app/data/raw
 
 To update the team database change the files under acp_app/data/raw/team and run:
 
-`(.venv)$ flask home init_team`
+`(.venv)$ flask home init`
+
+To update the truthtable parser database change the files under acp_app/data/raw/gcc and run:
+
+`(.venv)$ flask ttparser init`
 
 ## Environment Variables
 To control the configuration the following environment variables are used:

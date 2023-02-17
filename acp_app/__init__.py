@@ -32,4 +32,7 @@ def create_app(config_name):
     from .views import intellution_views
     app.register_blueprint(intellution_views.bp)
 
+    from .views import ttparser_views
+    app.register_blueprint(ttparser_views.bp)
+
     return app

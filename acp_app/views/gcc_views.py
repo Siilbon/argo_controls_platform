@@ -36,7 +36,7 @@ def gcc_eos():
         eos_mod6 = int(gcc_eos_form.eos_mod6.data)
         eos_mod7 = int(gcc_eos_form.eos_mod7.data)
         eos_mod8 = int(gcc_eos_form.eos_mod8.data)
-        session['eos_message'], session['step_not_found'] = eos_resolve(
+        session['eos_message'], session['step_not_found'], step_branch = eos_resolve(
             eos_type=eos_type,
             eos_mod_1=eos_mod1,
             eos_mod_2=eos_mod2,

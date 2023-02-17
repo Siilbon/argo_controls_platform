@@ -57,3 +57,23 @@ class IntellutionTag(db.Model):
 
     def __repr__(self):
         return f'<Intellution Tag {self.tag}>'
+
+
+class Truthtables(db.Model):
+    __tablename__ = 'tt_master'
+
+    idx = db.Column(db.Integer, primary_key=True)
+    #plc = db.Column(db.String(64))
+    name = db.Column(
+        db.String(64))  #List of '41IXA', '41IXB', '41IXC'... etc unique?
+
+    seq = db.Column(db.Integer)
+    #step_order = db.Column(db.Integer)
+    step_num = db.Column(db.Integer)
+    step_name = db.Column(db.String)
+    eos_cond = db.Column(db.String)
+    next_step = db.Column(db.String)
+    true_dev = db.Column(db.String)
+
+    def __repr__(self):
+        return f'<Truthtables {self.name}>'
