@@ -1,22 +1,27 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from config import config_dict
 
 db = SQLAlchemy()
 
 
+def register_commands(app):
+    from .commands import init_db
+    app.cli.add_command(init_db)
+
+
 def create_app(config_name):
-    # Initialize app with configuration
     app = Flask(__name__)
     app.config.from_object(config_dict[config_name])
     config_dict[config_name].init_app(app)
-    print(config_dict[config_name])
 
-    # Initialize extentions
+    # Initialize extensions
     db.init_app(app)
+    CORS(app, origins=app.config.get('CORS_ORIGINS', 'http://localhost:5173'))
 
-    # Register blueprints
+    # Register legacy Jinja2 blueprints (kept for CLI commands during transition)
     from .views import aspen_views
     app.register_blueprint(aspen_views.bp)
 
@@ -34,5 +39,11 @@ def create_app(config_name):
 
     from .views import ttparser_views
     app.register_blueprint(ttparser_views.bp)
+
+    # Register REST API blueprints
+    from .api import register_api_blueprints
+    register_api_blueprints(app)
+
+    register_commands(app)
 
     return app

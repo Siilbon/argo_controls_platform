@@ -128,6 +128,17 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Environment variables
+.env
+.env.*
+.env.local
+!.env.example
+env.sh
+
+# Node / React
+node_modules/
+dist/
+
 # Argo Controls Platform 
 acp_app/data/
 .vscode/

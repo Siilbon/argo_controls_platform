@@ -5,6 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'http://localhost:5173')
 
     @staticmethod
     def init_app(app):
@@ -12,7 +13,6 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL')
 
 

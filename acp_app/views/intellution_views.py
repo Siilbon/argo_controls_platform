@@ -29,7 +29,7 @@ class IntelSearchForm(FlaskForm):
 def intellution_search(search_term):
     # Build query for searching for tag
     intel_col = request.args.get('intel_col', 'tag')
-    intel_query = select([IntellutionTag]).where(
+    intel_query = select(IntellutionTag).where(
         (eval(f'IntellutionTag.{intel_col}').ilike(f'%{search_term}%')))
 
     intellution_table = pd.read_sql(intel_query, db.engine)

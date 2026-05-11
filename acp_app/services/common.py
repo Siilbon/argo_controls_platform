@@ -1,11 +1,19 @@
 from acp_app.models import Teammate
+from acp_app import db
+from sqlalchemy import select
+import pandas as pd
 import re
 
 
 def get_team():
-    team = Teammate.query.filter_by(active=True).order_by(Teammate.id)
+    return db.session.execute(
+        select(Teammate).filter_by(active=True).order_by(Teammate.id)
+    ).scalars().all()
 
-    return team
+
+def df_to_records(df):
+    """Convert a DataFrame to a JSON-serializable list of dicts (NaN → None)."""
+    return df.where(pd.notnull(df), None).to_dict(orient='records')
 
 
 def render_dataframe(df, bootstrap_table=False):

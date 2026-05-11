@@ -28,10 +28,9 @@ def ttparse(ttname, seqnum):
     SortError = False
 
     try:
-        tt_query = (select([
-            Truthtables
-        ]).where(Truthtables.name == f'{ttname.upper()}').where(
-            Truthtables.seq == seqnum))
+        tt_query = (select(Truthtables)
+                    .where(Truthtables.name == ttname.upper())
+                    .where(Truthtables.seq == seqnum))
 
         tt_table = pd.read_sql(tt_query, db.engine)
         tt_table = tt_table.drop('idx', axis=1)
