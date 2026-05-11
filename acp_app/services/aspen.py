@@ -78,6 +78,20 @@ class AspenConn:
         df = pd.read_sql(sql_query, self.conn)
 
         return df
+    
+    def iogetdef(self, tag_list=None, iogetdef=''):
+        tag_list = self.parse_tag_list(tag_list)
+
+        sql_query = f'''
+        SELECT NAME, IO_TAGNAME, "IO_VALUE_RECORD&&FLD"
+        FROM IOGetDef
+        WHERE "IO_VALUE_RECORD&&FLD" LIKE '{tag_list}' AND
+        NAME LIKE '%{iogetdef}%'
+        '''
+
+        df = pd.read_sql(sql_query, self.conn)
+
+        return df
 
     def iostatus(self):
         '''Get the IOGetHistDef table overview of good and bad tags from the different sources

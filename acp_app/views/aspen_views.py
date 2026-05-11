@@ -26,7 +26,7 @@ def aspen_search(search_term):
     try:
         aspen_conn = AspenConn(aspen_server, '')
 
-        aspen_io_table = render_dataframe(aspen_conn.iogethistdef(search_term),
+        aspen_io_table = render_dataframe(aspen_conn.iogetdef(search_term),
                                           bootstrap_table=True)
 
         aspen_ip_table = render_dataframe(aspen_conn.ip_analog(search_term),

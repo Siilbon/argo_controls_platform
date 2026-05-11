@@ -11,7 +11,7 @@ def aspen_search(search_term):
     try:
         conn = AspenConn(aspen_server, '')
         return jsonify({
-            'io_data': df_to_records(conn.iogethistdef(search_term)),
+            'io_data': df_to_records(conn.iogetdef(search_term)),
             'ip_data': df_to_records(conn.ip_analog(search_term)),
         })
     except Exception:
