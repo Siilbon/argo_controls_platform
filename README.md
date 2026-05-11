@@ -80,6 +80,28 @@ All commands are run via `dev.sh` to ensure the environment is loaded:
 | `./dev.sh flask init-ttparser` | Load GCC Truthtable data |
 | `./dev.sh flask run --debug` | Start Flask dev server |
 
+## Data File Schemas
+
+### `acp_app/data/raw/team/team.csv`
+
+One row per person. Multiple units for one person are separated by `|`.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `name` | string | Full name |
+| `role` | string | Job title |
+| `email` | string | Email address (can be blank) |
+| `linkedin` | string | Full LinkedIn URL (can be blank) |
+| `active` | boolean | `true` to show, `false` to hide |
+| `units` | string | Plant areas, pipe-separated: `Unit1\|Unit2` |
+
+Example:
+```csv
+name,role,email,linkedin,active,units
+John Doe,Controls Engineer,John@company.com,,true,Unit1|Unit2
+Jane Doesnt,Controls Engineer,,,true,Utilities
+```
+
 ## Environment Variables
 
 See `.env.example` for a full template. Key variables:

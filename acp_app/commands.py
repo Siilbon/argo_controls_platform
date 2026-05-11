@@ -16,7 +16,7 @@ def init_db():
 def init_team():
     import pandas as pd
     df = pd.read_csv('acp_app/data/raw/team/team.csv')
-    df.to_sql('team', db.engine, if_exists='replace', index=False)
+    df.to_sql('team', db.engine, if_exists='replace', index=True, index_label='id')
     click.echo(f'Successfully loaded {len(df)} team members.')
 
 

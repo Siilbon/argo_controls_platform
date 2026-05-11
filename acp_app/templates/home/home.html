@@ -62,11 +62,11 @@
             {% for member in team %}
             <div class="card" style="min-width: 150px;">
                 <div class="card-body">
-                    <h4 class="card-title"><a href="mailto:{{ member['email'] }}">{{ member['name'] }}</a></h4>
-                    <p class="card-text">{{ member['role'] }}</p>
+                    <h4 class="card-title"><a href="mailto:{{ member.email }}">{{ member.name }}</a></h4>
+                    <p class="card-text">{{ member.role }}</p>
                 </div>
                 <div class='card-footer'>
-                    {% for unit in member.units.all() %}{{unit.name}}<br>{% endfor %}
+                    {% for unit in member.units.split('|') %}{{ unit.strip() }}<br>{% endfor %}
                 </div>
             </div>
             {% endfor %}
