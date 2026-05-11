@@ -1,6 +1,6 @@
 import os
 from acp_app import create_app, db
-from acp_app.models import Teammate, Unit, IntellutionTag
+from acp_app.models import TeamMember, IntellutionTag
 # from flask_migrate import Migrate
 
 app = create_app(os.environ.get('FLASK_CONFIG'))
@@ -13,6 +13,5 @@ if __name__ == "__main__":
 @app.shell_context_processor
 def make_shell_context():
     return dict(db=db,
-                Teammate=Teammate,
-                Unit=Unit,
+                TeamMember=TeamMember,
                 IntellutionTag=IntellutionTag)

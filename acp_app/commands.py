@@ -15,11 +15,9 @@ def init_db():
 @with_appcontext
 def init_team():
     import pandas as pd
-    controls_team = pd.read_csv('acp_app/data/raw/team/teammates.csv')
-    argo_units = pd.read_csv('acp_app/data/raw/team/units.csv')
-    controls_team.to_sql('teammates', db.engine, if_exists='replace', index=False)
-    argo_units.to_sql('units', db.engine, if_exists='replace', index=False)
-    click.echo('Successfully loaded new team configuration.')
+    df = pd.read_csv('acp_app/data/raw/team/team.csv')
+    df.to_sql('team', db.engine, if_exists='replace', index=False)
+    click.echo(f'Successfully loaded {len(df)} team members.')
 
 
 @click.command('init-intellution')

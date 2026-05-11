@@ -1,5 +1,5 @@
-from acp_app.models import Teammate
 from acp_app import db
+from acp_app.models import TeamMember
 from sqlalchemy import select
 import pandas as pd
 import re
@@ -7,7 +7,7 @@ import re
 
 def get_team():
     return db.session.execute(
-        select(Teammate).filter_by(active=True).order_by(Teammate.id)
+        select(TeamMember).where(TeamMember.active == True).order_by(TeamMember.id)
     ).scalars().all()
 
 

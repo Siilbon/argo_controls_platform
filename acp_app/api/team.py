@@ -8,13 +8,13 @@ bp = Blueprint('api_team', __name__)
 def team():
     data = [
         {
-            'id': t.id,
-            'name': t.name,
-            'role': t.role,
-            'email': t.email,
-            'linkedin': t.linkedin,
-            'units': [u.name for u in t.units],
+            'id': m.id,
+            'name': m.name,
+            'role': m.role,
+            'email': m.email,
+            'linkedin': m.linkedin,
+            'units': [u.strip() for u in (m.units or '').split('|') if u.strip()],
         }
-        for t in get_team()
+        for m in get_team()
     ]
     return jsonify({'team': data})

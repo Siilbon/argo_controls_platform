@@ -1,28 +1,18 @@
 from . import db
 
 
-class Teammate(db.Model):
-    __tablename__ = 'teammates'
+class TeamMember(db.Model):
+    __tablename__ = 'team'
     id = db.Column(db.Integer, primary_key=True)
     active = db.Column(db.Boolean)
-    name = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64))
     role = db.Column(db.String(64))
-    units = db.relationship('Unit', backref='teammate', lazy='dynamic')
     email = db.Column(db.String(64))
     linkedin = db.Column(db.String(64))
+    units = db.Column(db.String(256))  # pipe-separated: "Wetmill|Refinery"
 
     def __repr__(self):
-        return f'<Teammate {self.name}>'
-
-
-class Unit(db.Model):
-    __tablename__ = 'units'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True)
-    teammate_id = db.Column(db.Integer, db.ForeignKey('teammates.id'))
-
-    def __repr__(self):
-        return f'<Unit {self.name}>'
+        return f'<TeamMember {self.name}>'
 
 
 class IntellutionTag(db.Model):
