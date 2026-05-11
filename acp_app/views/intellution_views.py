@@ -57,29 +57,3 @@ def intellution_search(search_term):
                            intel_search=search_term,
                            intel_col=intel_col)
 
-
-@bp.cli.command('init')
-def load_intellution_db():
-    intellution_path = 'acp_app/data/raw/intellution'
-    wm_path = f'{intellution_path}/WETMILL.csv'
-    ref_path = f'{intellution_path}/REFINERY.csv'
-    dex_path = f'{intellution_path}/DEXTROSE.csv'
-    util_path = f'{intellution_path}/UTILITY.csv'
-
-    wm = IntellutionDB(wm_path)
-    dex = IntellutionDB(dex_path)
-    ref = IntellutionDB(ref_path)
-    util = IntellutionDB(util_path)
-
-    intellution_tags = pd.concat([wm.df, dex.df, ref.df, util.df],
-                                 ignore_index=True)
-
-    intellution_tags.to_sql('intellution_tags',
-                            db.engine,
-                            if_exists='replace',
-                            index=True,
-                            index_label='index')
-
-    print('Successfully loaded intellution data into the database')
-
-    return True

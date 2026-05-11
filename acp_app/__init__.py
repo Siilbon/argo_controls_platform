@@ -8,8 +8,11 @@ db = SQLAlchemy()
 
 
 def register_commands(app):
-    from .commands import init_db
+    from .commands import init_db, init_team, init_intellution, init_ttparser
     app.cli.add_command(init_db)
+    app.cli.add_command(init_team)
+    app.cli.add_command(init_intellution)
+    app.cli.add_command(init_ttparser)
 
 
 def create_app(config_name):

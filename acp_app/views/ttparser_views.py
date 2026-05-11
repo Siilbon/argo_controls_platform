@@ -8,8 +8,6 @@ from acp_app.models import Truthtables, IntellutionTag
 from wtforms.validators import DataRequired
 from acp_app.services.common import render_dataframe
 from acp_app.services.truthtable_parser import TruthtableDB
-from pathlib import Path
-
 
 class TruthtableParseForm(FlaskForm):
 
@@ -75,24 +73,3 @@ def ttparse(ttname, seqnum):
                            seqnum=seqnum,
                            tt_table=tt_table)
 
-
-@bp.cli.command('init')
-def load_truthtable_db():
-    all_tts = []
-    path = f'acp_app/data/raw/gcc'
-
-    files = Path(path).glob('**/*.xls')
-    for file in files:
-        truthtable = TruthtableDB(file)
-        all_tts.append(truthtable.tt)
-    tt_master = pd.concat(all_tts)
-
-    tt_master.to_sql('tt_master',
-                     db.engine,
-                     if_exists='replace',
-                     index=True,
-                     index_label='idx')
-
-    print('Successfully loaded truthtables into the database')
-
-    return True

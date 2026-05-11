@@ -1,52 +1,95 @@
 # Argo Controls Platform
 
-This tool is a Flask app for sharing python utilities using a user friendly web interface.  The directory structure is:
+A Flask REST API for sharing Python utilities with a React frontend (in progress). The Flask backend exposes all features as JSON endpoints under `/api/`; the legacy Jinja2 views remain during the frontend transition.
+
+## Project Structure
 
 ```
-├── acp_app/ (All of the source code for the site)
-│   ├── data/ (Folder for data)
-│   │   ├── raw/ (Raw data CSVs and other files)
-│   │   └── data.sqlite (SQLite database)
-│   ├── services/ (Folder for python script utilities)
-│   ├── static/ (Folder for css, js and other static files)
-│   ├── templates/ (Folder for html Jinja Templates)
-│   ├── views/ (Folder for Flask view files)
-│   ├── __init__.py
-│   └── models.py (Contains the database models)
-├── migrations/ (Folder for database migration scripts)
-├── tests/ (Folder for tests)
-├── .gitignore (What files for version control to ignore)
-├── app.py (Main script to run the site)
-├── config.py (Flask configs)
-├── README.md
-├── requirements.txt (required python packages)
-└── web.config (wfastcgi config for IIS)
-
+├── acp_app/
+│   ├── api/                  REST API blueprints (JSON responses for React)
+│   ├── services/             Business logic — no HTTP awareness
+│   ├── views/                Legacy Jinja2 views (routes only, to be removed post-React)
+│   ├── static/               CSS and images (legacy)
+│   ├── templates/            Jinja2 HTML templates (legacy)
+│   ├── data/
+│   │   └── raw/              Source CSVs and XLS files for seeding the database
+│   ├── commands.py           Flask CLI commands (init-db, init-team, etc.)
+│   ├── models.py             SQLAlchemy ORM models
+│   └── __init__.py           App factory
+├── instance/                 SQLite database lives here (gitignored)
+├── tests/
+├── .env.example              Template for environment variables
+├── app.py                    Entry point
+├── config.py                 Flask configuration classes
+├── dev.sh                    Developer workflow script
+├── requirements.txt
+└── web.config                wfastcgi config for IIS
 ```
-## Command Line Commands
 
-First activate the virtual environment (.venv) by opening the command prompt and running the following command:
+## API Endpoints
 
-`>cd C:\argo_controls_platform\.venv\Scripts & activate & cd C:\argo_controls_platform\`
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/team` | Team members list |
+| GET | `/api/aspen/search/<term>` | Aspen IO + IP tag search |
+| GET | `/api/aspen/status` | Aspen IO status |
+| GET | `/api/intellution/<term>?col=tag` | Intellution tag search |
+| POST | `/api/gcc/eos` | EOS code → plain English |
+| GET | `/api/ttparser/<name>/<seq>` | Truthtable lookup |
 
-To update the intellution database just put the new files under acp_app/data/raw/intellution and run:
+## First-Time Setup
 
-`(.venv)$ flask intellution init`
+1. Create and fill in your local environment file:
+   ```bash
+   cp .env.example .env.local
+   # edit .env.local with your values
+   ```
 
-To update the team database change the files under acp_app/data/raw/team and run:
+2. Create a virtual environment and install dependencies:
+   ```bash
+   python -m venv .venv
+   pip install -r requirements.txt
+   ```
 
-`(.venv)$ flask home init`
+3. Initialize the database:
+   ```bash
+   ./dev.sh flask init-db
+   ```
 
-To update the truthtable parser database change the files under acp_app/data/raw/gcc and run:
+4. Seed the database with your data files:
+   ```bash
+   ./dev.sh flask init-intellution  # requires files in acp_app/data/raw/intellution/
+   ./dev.sh flask init-team         # requires files in acp_app/data/raw/team/
+   ./dev.sh flask init-ttparser     # requires files in acp_app/data/raw/gcc/
+   ```
 
-`(.venv)$ flask ttparser init`
+5. Start the dev server:
+   ```bash
+   ./dev.sh flask run --debug
+   ```
+
+## CLI Commands
+
+All commands are run via `dev.sh` to ensure the environment is loaded:
+
+| Command | Description |
+|---------|-------------|
+| `./dev.sh flask init-db` | Create all database tables |
+| `./dev.sh flask init-intellution` | Load Intellution tag data |
+| `./dev.sh flask init-team` | Load team and unit data |
+| `./dev.sh flask init-ttparser` | Load GCC Truthtable data |
+| `./dev.sh flask run --debug` | Start Flask dev server |
 
 ## Environment Variables
-To control the configuration the following environment variables are used:
-- `FLASK_APP`:  The main script, app.py in this example
-- `SECRET_KEY`:  A hard to guess string
-- `ASPEN_SERVER`:  The Aspen Server
-- `FLASK_CONFIG`:  What type of configuration to use, the default is production
-- `TEST_DATABASE_URL`:  Testing database url
-- `DEV_DATABASE_URL`:  Development database url
-- `DATABASE_URL`:  Production database url [sqlite:///c:/argo_controls_platform/acp_app/data/data.sqlite]
+
+See `.env.example` for a full template. Key variables:
+
+| Variable | Description |
+|----------|-------------|
+| `FLASK_APP` | Entry point (`app.py`) |
+| `FLASK_CONFIG` | `development`, `testing`, or `production` |
+| `SECRET_KEY` | Random secret string |
+| `DEV_DATABASE_URL` | Dev DB — `sqlite:///data.sqlite` for local SQLite |
+| `DATABASE_URL` | Production DB URL |
+| `ASPEN_SERVER` | Aspen server hostname (production) |
+| `CORS_ORIGINS` | Allowed origins for the API (default: `http://localhost:5173`) |

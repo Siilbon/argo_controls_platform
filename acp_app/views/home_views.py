@@ -3,10 +3,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired
 from acp_app.services.common import get_team
-from acp_app.services.intellution import IntellutionDB
-from acp_app import db
-from acp_app.models import Teammate, Unit
-import pandas as pd
 
 
 class SearchForm(FlaskForm):
@@ -65,19 +61,3 @@ def home():
                            aspen_form=aspen_form,
                            aspen_search=aspen_search,
                            team=team)
-
-
-@bp.cli.command('init')
-def init_team():
-    controls_team = pd.read_csv(
-        filepath_or_buffer='acp_app/data/raw/team/teammates.csv')
-
-    argo_units = pd.read_csv(
-        filepath_or_buffer='acp_app/data/raw/team/units.csv')
-
-    controls_team.to_sql('teammates',
-                         db.engine,
-                         if_exists='replace',
-                         index=False)
-    argo_units.to_sql('units', db.engine, if_exists='replace', index=False)
-    print('Successfully loaded new team configuration!')
