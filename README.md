@@ -46,30 +46,38 @@ A Flask REST API for sharing Python utilities with a React frontend (in progress
    # edit .env.local with your values
    ```
 
-2. Create a virtual environment and install dependencies:
+2. Clone [mfgkit](https://github.com/Siilbon/mfgkit) next to this project. It holds the Aspen, Intellution, and DeltaV parsers, and `requirements.txt` installs it in editable mode from `../mfgkit`:
+   ```
+   <parent folder>/
+   ├── argo_controls_platform/
+   └── mfgkit/
+   ```
+
+3. Create a virtual environment and install dependencies:
    ```bash
    python -m venv .venv
+   source .venv/bin/activate
    pip install -r requirements.txt
    ```
 
-3. Initialize the database:
+4. Initialize the database:
    ```bash
    ./dev.sh flask init-db
    ```
 
-4. Seed the database with your data files:
+5. Seed the database with your data files:
    ```bash
    ./dev.sh flask init-intellution  # requires files in acp_app/data/raw/intellution/
    ./dev.sh flask init-team         # requires files in acp_app/data/raw/team/
    ./dev.sh flask init-ttparser     # requires files in acp_app/data/raw/gcc/
    ```
 
-5. Start the Flask dev server on port 5001 (the React dev server proxies `/api` there):
+6. Start the Flask dev server on port 5001 (the React dev server proxies `/api` there):
    ```bash
    ./dev.sh flask run --debug --port 5001
    ```
 
-6. In a second terminal, install frontend dependencies and start the React dev server:
+7. In a second terminal, install frontend dependencies and start the React dev server:
    ```bash
    cd frontend
    npm install      # first time only

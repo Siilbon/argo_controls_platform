@@ -8,6 +8,7 @@ iniconfig==2.3.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.3
+-e ../mfgkit[aspen]
 numpy==2.4.4
 packaging==26.1
 pandas==3.0.2

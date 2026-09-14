@@ -1,5 +1,5 @@
 from flask import Blueprint, current_app, render_template, redirect, url_for, abort
-from acp_app.services.aspen import AspenConn
+from mfgkit.aspen import AspenConn
 from acp_app.services.common import render_dataframe
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -24,13 +24,12 @@ class SearchForm(FlaskForm):
 def aspen_search(search_term):
     aspen_server = current_app.config.get('ASPEN_SERVER')
     try:
-        aspen_conn = AspenConn(aspen_server, '')
+        with AspenConn(aspen_server) as aspen_conn:
+            aspen_io_table = render_dataframe(
+                aspen_conn.iogetdef(f'%{search_term}%'), bootstrap_table=True)
 
-        aspen_io_table = render_dataframe(aspen_conn.iogetdef(search_term),
-                                          bootstrap_table=True)
-
-        aspen_ip_table = render_dataframe(aspen_conn.ip_analog(search_term),
-                                          bootstrap_table=True)
+            aspen_ip_table = render_dataframe(
+                aspen_conn.ip_analog(search_term), bootstrap_table=True)
 
         aspen_search = None
         aspen_form = SearchForm(prefix='intel')
@@ -54,10 +53,9 @@ def aspen_search(search_term):
 def aspen_status():
     aspen_server = current_app.config.get('ASPEN_SERVER')
     try:
-        aspen_conn = AspenConn(aspen_server, '')
-
-        aspen_status_table = render_dataframe(aspen_conn.iostatus(),
-                                              bootstrap_table=True)
+        with AspenConn(aspen_server) as aspen_conn:
+            aspen_status_table = render_dataframe(
+                aspen_conn.io_task_status(), bootstrap_table=True)
 
         return render_template('aspen/aspen_status.html',
                            aspen_status_table=aspen_status_table)

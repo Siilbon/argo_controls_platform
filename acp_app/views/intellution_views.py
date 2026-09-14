@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from acp_app.services.common import render_dataframe
-from acp_app.services.intellution import IntellutionDB, clean_intellution_df
+from acp_app.services.intellution import clean_intellution_df
 from acp_app import db
 from sqlalchemy import select
 from acp_app.models import IntellutionTag

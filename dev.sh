@@ -34,6 +34,10 @@ set -a  # auto-export every variable defined in .env.local
 source .env.local
 set +a
 
+# mfgkit is installed editable, but macOS keeps flagging .venv files hidden and
+# Python 3.14 skips hidden .pth files, so put the sibling repo on the path directly.
+export PYTHONPATH="$(cd "$(dirname "$0")/../mfgkit" && pwd)${PYTHONPATH:+:$PYTHONPATH}"
+
 if [ $# -eq 0 ]; then
     echo "No command given. Example:  ./dev.sh flask run"
     exit 0

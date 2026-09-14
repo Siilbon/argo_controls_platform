@@ -24,13 +24,15 @@ def init_team():
 @with_appcontext
 def init_intellution():
     import pandas as pd
-    from .services.intellution import IntellutionDB
+    from mfgkit.intellution import IntellutionDB
+    from .services.intellution import clean_intellution_df
     path = 'acp_app/data/raw/intellution'
     wm  = IntellutionDB(f'{path}/WETMILL.csv')
     dex = IntellutionDB(f'{path}/DEXTROSE.csv')
     ref = IntellutionDB(f'{path}/REFINERY.csv')
     util = IntellutionDB(f'{path}/UTILITY.csv')
     tags = pd.concat([wm.df, dex.df, ref.df, util.df], ignore_index=True)
+    tags = clean_intellution_df(tags)
     tags.to_sql('intellution_tags', db.engine, if_exists='replace',
                 index=True, index_label='index')
     click.echo('Successfully loaded intellution data into the database.')
