@@ -8,8 +8,8 @@
 #   2. Edit .env.local — at minimum set:
 #        SECRET_KEY=<any random string>
 #        DEV_DATABASE_URL=<your db connection string>
-#        ASPEN_SERVER=<aspen host>        # production only
-#        CORS_ORIGINS=http://localhost:5173  # React dev server
+#        ASPEN_SERVER=<aspen host>
+#        CORS_ORIGINS=http://localhost:5173  # React dev server (comma-separated for multiple)
 #
 # USAGE
 #   ./dev.sh flask run               # start the Flask dev server
@@ -29,7 +29,10 @@ if [ ! -f .env.local ]; then
 fi
 
 source .venv/bin/activate
-source env.sh
+
+set -a  # auto-export every variable defined in .env.local
+source .env.local
+set +a
 
 if [ $# -eq 0 ]; then
     echo "No command given. Example:  ./dev.sh flask run"

@@ -22,7 +22,7 @@ def create_app(config_name):
 
     # Initialize extensions
     db.init_app(app)
-    CORS(app, origins=app.config.get('CORS_ORIGINS', 'http://localhost:5173'))
+    CORS(app, origins=app.config['CORS_ORIGINS'])
 
     # Register legacy Jinja2 blueprints (kept for CLI commands during transition)
     from .views import aspen_views

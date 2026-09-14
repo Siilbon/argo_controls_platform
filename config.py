@@ -5,7 +5,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'http://localhost:5173')
+    ASPEN_SERVER = os.environ.get('ASPEN_SERVER')
+    CORS_ORIGINS = [
+        o.strip()
+        for o in os.environ.get('CORS_ORIGINS', 'http://localhost:5173').split(',')
+        if o.strip()
+    ]
 
     @staticmethod
     def init_app(app):
@@ -23,7 +28,6 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    ASPEN_SERVER = os.environ.get('ASPEN_SERVER')
 
 
 config_dict = {

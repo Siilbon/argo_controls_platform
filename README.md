@@ -1,6 +1,6 @@
 # Argo Controls Platform
 
-A Flask REST API for sharing Python utilities with a React frontend (in progress). The Flask backend exposes all features as JSON endpoints under `/api/`; the legacy Jinja2 views remain during the frontend transition.
+A Flask REST API for sharing Python utilities with a React frontend (in progress, in `frontend/`). The Flask backend exposes all features as JSON endpoints under `/api/`; the legacy Jinja2 views remain during the frontend transition.
 
 ## Project Structure
 
@@ -16,6 +16,7 @@ A Flask REST API for sharing Python utilities with a React frontend (in progress
 │   ├── commands.py           Flask CLI commands (init-db, init-team, etc.)
 │   ├── models.py             SQLAlchemy ORM models
 │   └── __init__.py           App factory
+├── frontend/                 React + Vite + Tailwind app (see frontend/README.md)
 ├── instance/                 SQLite database lives here (gitignored)
 ├── tests/
 ├── .env.example              Template for environment variables
@@ -63,10 +64,31 @@ A Flask REST API for sharing Python utilities with a React frontend (in progress
    ./dev.sh flask init-ttparser     # requires files in acp_app/data/raw/gcc/
    ```
 
-5. Start the dev server:
+5. Start the Flask dev server on port 5001 (the React dev server proxies `/api` there):
    ```bash
-   ./dev.sh flask run --debug
+   ./dev.sh flask run --debug --port 5001
    ```
+
+6. In a second terminal, install frontend dependencies and start the React dev server:
+   ```bash
+   cd frontend
+   npm install      # first time only
+   npm run dev
+   ```
+   Open http://localhost:5173.
+
+## Running the Frontend
+
+The React app lives in `frontend/` and requires Node.js. During development, run **both** servers:
+
+| Terminal | Command | URL |
+|----------|---------|-----|
+| 1 (project root) | `./dev.sh flask run --debug --port 5001` | http://localhost:5001 |
+| 2 (`frontend/`) | `npm run dev` | http://localhost:5173 |
+
+Vite forwards any request starting with `/api` to `http://localhost:5001` (configured in `frontend/vite.config.js`), so frontend code calls relative paths like `fetch('/api/team')`. If Flask runs on a different port, API calls from the frontend will fail.
+
+See [frontend/README.md](frontend/README.md) for the other npm scripts.
 
 ## CLI Commands
 
@@ -78,7 +100,7 @@ All commands are run via `dev.sh` to ensure the environment is loaded:
 | `./dev.sh flask init-intellution` | Load Intellution tag data |
 | `./dev.sh flask init-team` | Load team and unit data |
 | `./dev.sh flask init-ttparser` | Load GCC Truthtable data |
-| `./dev.sh flask run --debug` | Start Flask dev server |
+| `./dev.sh flask run --debug --port 5001` | Start Flask dev server |
 
 ## Data File Schemas
 
@@ -113,5 +135,5 @@ See `.env.example` for a full template. Key variables:
 | `SECRET_KEY` | Random secret string |
 | `DEV_DATABASE_URL` | Dev DB — `sqlite:///data.sqlite` for local SQLite |
 | `DATABASE_URL` | Production DB URL |
-| `ASPEN_SERVER` | Aspen server hostname (production) |
-| `CORS_ORIGINS` | Allowed origins for the API (default: `http://localhost:5173`) |
+| `ASPEN_SERVER` | Aspen server hostname |
+| `CORS_ORIGINS` | Allowed origins for the API, comma-separated (default: `http://localhost:5173`) |
