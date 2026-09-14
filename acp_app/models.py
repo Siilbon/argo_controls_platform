@@ -18,6 +18,7 @@ class TeamMember(db.Model):
 class IntellutionTag(db.Model):
     __tablename__ = 'intellution_tags'
     index = db.Column(db.Integer, primary_key=True)
+    database = db.Column(db.String(64))
     name = db.Column(db.String(64), unique=True)
     tag = db.Column(db.String(64))
     desc = db.Column(db.String(64))
@@ -44,9 +45,29 @@ class IntellutionTag(db.Model):
     alias_root = db.Column(db.String(64))
     alias_field = db.Column(db.String(64))
     alias_rest = db.Column(db.String(64))
+    uploaded = db.Column(db.DateTime)
 
     def __repr__(self):
         return f'<Intellution Tag {self.tag}>'
+
+
+class DeltavModule(db.Model):
+    __tablename__ = 'deltav_modules'
+    index = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    desc = db.Column(db.String(256))
+    area = db.Column(db.String(64))
+    node_name = db.Column(db.String(64))
+    node_type = db.Column(db.String(64))
+    faceplate = db.Column(db.String(64))
+    detail = db.Column(db.String(64))
+    default_display = db.Column(db.String(64))
+    area_seq = db.Column(db.String(64))
+    doid = db.Column(db.String(64))
+    uploaded = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return f'<DeltaV Module {self.name}>'
 
 
 class Truthtables(db.Model):

@@ -8,10 +8,11 @@ db = SQLAlchemy()
 
 
 def register_commands(app):
-    from .commands import init_db, init_team, init_intellution, init_ttparser
+    from .commands import init_db, init_team, init_intellution, init_deltav, init_ttparser
     app.cli.add_command(init_db)
     app.cli.add_command(init_team)
     app.cli.add_command(init_intellution)
+    app.cli.add_command(init_deltav)
     app.cli.add_command(init_ttparser)
 
 
@@ -19,6 +20,9 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config_dict[config_name])
     config_dict[config_name].init_app(app)
+
+    # Keep dict keys in insertion order so API rows match DataFrame column order
+    app.json.sort_keys = False
 
     # Initialize extensions
     db.init_app(app)

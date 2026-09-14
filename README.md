@@ -35,6 +35,7 @@ A Flask REST API for sharing Python utilities with a React frontend (in progress
 | GET | `/api/aspen/search/<term>` | Aspen IO + IP tag search |
 | GET | `/api/aspen/status` | Aspen IO status |
 | GET | `/api/intellution/<term>?col=tag` | Intellution tag search |
+| GET | `/api/deltav/<term>?col=name` | DeltaV module search |
 | POST | `/api/gcc/eos` | EOS code → plain English |
 | GET | `/api/ttparser/<name>/<seq>` | Truthtable lookup |
 
@@ -68,6 +69,7 @@ A Flask REST API for sharing Python utilities with a React frontend (in progress
 5. Seed the database with your data files:
    ```bash
    ./dev.sh flask init-intellution  # requires files in acp_app/data/raw/intellution/
+   ./dev.sh flask init-deltav       # requires MODT.TXT, ANT.TXT, DT.TXT in acp_app/data/raw/deltav/
    ./dev.sh flask init-team         # requires files in acp_app/data/raw/team/
    ./dev.sh flask init-ttparser     # requires files in acp_app/data/raw/gcc/
    ```
@@ -106,6 +108,7 @@ All commands are run via `dev.sh` to ensure the environment is loaded:
 |---------|-------------|
 | `./dev.sh flask init-db` | Create all database tables |
 | `./dev.sh flask init-intellution` | Load Intellution tag data |
+| `./dev.sh flask init-deltav` | Load DeltaV module data |
 | `./dev.sh flask init-team` | Load team and unit data |
 | `./dev.sh flask init-ttparser` | Load GCC Truthtable data |
 | `./dev.sh flask run --debug --port 5001` | Start Flask dev server |
@@ -131,6 +134,22 @@ name,role,email,linkedin,active,units
 John Doe,Controls Engineer,John@company.com,,true,Unit1|Unit2
 Jane Doesnt,Controls Engineer,,,true,Utilities
 ```
+
+### `acp_app/data/raw/intellution/`
+
+iFIX tag database exports, one CSV per node: `WETMILL.csv`, `DEXTROSE.csv`, `REFINERY.csv`, `UTILITY.csv`. The file name becomes the `database` column, and the file's last-modified time becomes `uploaded` — copy exports in a way that keeps that time.
+
+### `acp_app/data/raw/deltav/`
+
+Flat-file tables from a DeltaV download, copied as-is:
+
+| File | Contents |
+|------|----------|
+| `MODT.TXT` | Modules: name, description, displays, area id, controller id |
+| `ANT.TXT` | Plant areas (joined to modules by area id) |
+| `DT.TXT` | Devices/controllers (joined to modules by controller id) |
+
+`MODT.TXT`'s last-modified time becomes the `uploaded` column.
 
 ## Environment Variables
 

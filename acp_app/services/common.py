@@ -13,7 +13,14 @@ def get_team():
 
 def df_to_records(df):
     """Convert a DataFrame to a JSON-serializable list of dicts (NaN → None)."""
-    return df.where(pd.notnull(df), None).to_dict(orient='records')
+    # jsonify renders datetimes as HTTP dates labelled GMT; send sortable
+    # local-time strings instead
+    df = df.copy()
+    for col in df.select_dtypes(include=['datetime', 'datetimetz']):
+        df[col] = df[col].dt.strftime('%Y-%m-%d %H:%M:%S')
+    # Cast to object first: typed columns (float, pandas 3 str) turn None
+    # back into NaN, which jsonify emits as invalid JSON.
+    return df.astype(object).where(pd.notnull(df), None).to_dict(orient='records')
 
 
 def render_dataframe(df, bootstrap_table=False):

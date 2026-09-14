@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import SearchCard from '../components/SearchCard'
 import TeamCard from '../components/TeamCard'
 
-function Home() {
+function Home({ onSearch }) {
   // useState(null) means "no data yet". Once the fetch completes it becomes
   // an array of team members. We use null (not []) so we can distinguish
   // "still loading" from "loaded but empty".
@@ -20,11 +20,6 @@ function Home() {
       .then(data => setTeam(data.team))
       .catch(err => setTeamError(err.message))
   }, [])
-
-  function handleIntelSearch(term) {
-    // TODO: navigate to Intellution results page
-    console.log('Intellution search:', term)
-  }
 
   function handleAspenSearch(term) {
     // TODO: navigate to Aspen results page
@@ -46,12 +41,18 @@ function Home() {
         {/* Search tools */}
         <section>
           <h2 className="text-lg font-semibold text-gray-700 mb-4">Search</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <SearchCard
               title="Intellution"
               description="Search the Argo HMI tag database"
               placeholder="e.g. V48123"
-              onSearch={handleIntelSearch}
+              onSearch={term => onSearch('intellution', term)}
+            />
+            <SearchCard
+              title="DeltaV"
+              description="Search the Argo DeltaV modules"
+              placeholder="e.g. FV87088"
+              onSearch={term => onSearch('deltav', term)}
             />
             <SearchCard
               title="Aspen"
