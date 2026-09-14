@@ -5,14 +5,15 @@ React 19 + Vite + Tailwind CSS frontend for the Argo Controls Platform. It talks
 ## Project Structure
 
 ```
-├── public/               Static files served as-is
+├── public/               Static files served as-is (favicon)
 ├── src/
-│   ├── assets/           Images imported by components
-│   ├── components/       Reusable UI components (SearchCard, TeamCard)
-│   ├── pages/            Page-level components (Home)
-│   ├── App.jsx           Root component
+│   ├── components/       Reusable UI components (NavBar, Footer, SearchCard, TeamCard, DataTable, DataAge)
+│   ├── pages/            Page-level components (Home, SearchResults, Trend, Gcc, Status)
+│   ├── App.jsx           Root component: routes (react-router), theme, signed-in user
+│   ├── searches.js       Search definitions and nav links
+│   ├── api.js            fetchJson, dataset ages, and trend link helpers
 │   ├── main.jsx          Entry point
-│   └── index.css         Tailwind import and global styles
+│   └── index.css         Tailwind import, dark mode variant, global styles
 ├── index.html
 ├── vite.config.js        Vite plugins and the /api dev proxy
 └── eslint.config.js
@@ -50,6 +51,6 @@ If Flask runs on a different port, update the proxy target in `vite.config.js`.
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start the Vite dev server with hot reload |
-| `npm run build` | Build for production into `dist/` |
+| `npm run build` | Build for production into `dist/`, which Flask serves (see Deploying in the root README) |
 | `npm run preview` | Serve the production build locally |
 | `npm run lint` | Run ESLint |

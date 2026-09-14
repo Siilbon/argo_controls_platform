@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+/* Turn on dark: classes when <html> has the "dark" class (set in index.html and App.jsx) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Lets the browser draw scrollbars and form controls in the matching theme */
+:root.dark {
+  color-scheme: dark;
+}

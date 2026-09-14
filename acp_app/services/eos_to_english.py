@@ -1414,30 +1414,37 @@ def eos_98(eos_mod_1=None,
     return f'{process_text1} or {process_text2}.'
 
 
+def new_step_branch():
+    """Fresh record of the steps an EOS branches to, filled in by the eos_ functions."""
+    branch = namedtuple('branching', ['branch_to', 'keepxfr'])
+    branch.branch_to = []
+    branch.keepxfr = False
+    return branch
+
+
+# Set at import so the eos_ functions can also be called directly (e.g. in tests)
+step_branch = new_step_branch()
+
+
 def eos_resolve(eos_type, eos_mod_1, eos_mod_2, eos_mod_3, eos_mod_4,
                 eos_mod_5, eos_mod_6, eos_mod_7, eos_mod_8):
     global step_branch
-    step_branch = namedtuple('branching', ['branch_to', 'keepxfr'])
-    step_branch.branch_to = []
-    step_branch.keepxfr = False
-    
+    step_branch = new_step_branch()
+
     eos_type = int(eos_type)
 
     header_text = f'End of step Type {eos_type}: The step ends when'
-    # header_text = 'The step ends when'
 
-    eos_function = f'eos_{eos_type}'
+    # Look the function up by name rather than eval-ing a built string
+    eos_function = globals().get(f'eos_{eos_type}')
 
-    try:
-        eos_text = eval(
-            f'''{eos_function}({eos_mod_1}, {eos_mod_2}, {eos_mod_3}, {eos_mod_4},
-                                            {eos_mod_5}, {eos_mod_6}, {eos_mod_7}, {eos_mod_8})'''
-        )
-
-        eos_step_desc_english = ' '.join([header_text, eos_text])
-        step_not_found = False
-    except NameError:
+    if eos_function is None:
         eos_step_desc_english = f'End of step type {eos_type}'
         step_not_found = True
+    else:
+        eos_text = eos_function(int(eos_mod_1), int(eos_mod_2), int(eos_mod_3), int(eos_mod_4),
+                                int(eos_mod_5), int(eos_mod_6), int(eos_mod_7), int(eos_mod_8))
+        eos_step_desc_english = ' '.join([header_text, eos_text])
+        step_not_found = False
 
     return eos_step_desc_english, step_not_found, step_branch

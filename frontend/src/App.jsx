@@ -1,62 +1,118 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Link, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router'
 import Home from './pages/Home'
 import SearchResults from './pages/SearchResults'
+import Trend from './pages/Trend'
+import Gcc from './pages/Gcc'
+import Status from './pages/Status'
+import NavBar from './components/NavBar'
+import Footer from './components/Footer'
+import { SEARCHES, NAV_LINKS } from './searches'
+import { fetchJson, trendUrl } from './api'
 
-// Everything the shared results page needs to know about each search.
-// `id` must match the key; it's also used for saved column choices and CSV names.
-const SEARCHES = {
-  intellution: {
-    id: 'intellution',
-    title: 'Intellution',
-    endpoint: '/api/intellution',
-    defaultColumn: 'tag',
-    searchColumns: [
-      'database', 'name', 'tag', 'desc', 'ft_topic', 'ioad', 'source', 'opc_topic',
-      'ienab', 'opendesc', 'closedesc', 'pri', 'sa1', 'sa2', 'sa3',
-      'all_areas', 'almext1', 'almext2', 'prefix', 'loop', 'suffix',
-      'alias_root', 'alias_field', 'alias_rest',
-    ],
-  },
-  deltav: {
-    id: 'deltav',
-    title: 'DeltaV',
-    endpoint: '/api/deltav',
-    defaultColumn: 'name',
-    searchColumns: [
-      'name', 'desc', 'area', 'node_name', 'node_type', 'faceplate', 'detail',
-      'default_display',
-    ],
-  },
+// 'dark' or 'light': the saved choice, or the system setting if there isn't one
+function getInitialTheme() {
+  try {
+    const saved = localStorage.getItem('theme')
+    if (saved === 'dark' || saved === 'light') return saved
+  } catch {
+    // Storage can be blocked (private window); fall back to the system setting
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-// App is the root of the component tree.
-// For now a piece of state decides which page to render. Once there are
-// more pages (Aspen results, etc.) a router can replace this.
+// /search/:searchId?q=term&col=column&table=table
+// The URL holds the whole search, so links and the back button work.
+function SearchPage() {
+  const { searchId } = useParams()
+  const [params, setParams] = useSearchParams()
+  const navigate = useNavigate()
+  const config = SEARCHES[searchId]
+  if (!config) return <NotFound />
+
+  const tables = config.tables
+  const table = tables ? (tables.find(t => t.id === params.get('table')) ?? tables[0]) : config
+  const term = params.get('q') ?? ''
+  const col = params.get('col') ?? table.defaultColumn
+
+  function search(newTerm, newCol, newTable) {
+    setParams({ q: newTerm, col: newCol, ...(tables ? { table: newTable } : {}) })
+  }
+
+  return (
+    <SearchResults
+      // A new key makes React throw away the old page and start fresh
+      key={`${searchId}:${table.id}:${col}:${term}`}
+      config={config}
+      table={tables ? table.id : undefined}
+      term={term}
+      col={col}
+      onSearch={search}
+      onTrend={tag => navigate(trendUrl(tag))}
+    />
+  )
+}
+
+// /gcc?eos=21
+function GccPage() {
+  const [params] = useSearchParams()
+  const eosType = params.get('eos') ?? undefined
+  // Keyed so a new EOS type from the home page resets the form
+  return <Gcc key={eosType ?? ''} eosType={eosType} />
+}
+
+function NotFound() {
+  return (
+    <main className="py-6 flex flex-col gap-2">
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Page not found</h1>
+      <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline">Back to home</Link>
+    </main>
+  )
+}
+
 function App() {
-  // null = show Home; { system, term, col } = show that search's results
-  const [search, setSearch] = useState(null)
+  const [theme, setTheme] = useState(getInitialTheme)
+  // Signed-in account from IIS Windows Authentication, shown in the nav bar
+  const [user, setUser] = useState(null)
 
-  if (search) {
-    const config = SEARCHES[search.system]
-    return (
-      <SearchResults
-        // A new key makes React throw away the old page and start fresh
-        key={`${search.system}:${search.col}:${search.term}`}
-        config={config}
-        term={search.term}
-        col={search.col}
-        onSearch={(term, col) => setSearch({ ...search, term, col })}
-        onBack={() => setSearch(null)}
-      />
-    )
+  // Tailwind's dark: classes key off the "dark" class on <html>
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+  }, [theme])
+
+  useEffect(() => {
+    fetchJson('/api/me').then(data => setUser(data.user)).catch(() => setUser(null))
+  }, [])
+
+  function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    try {
+      localStorage.setItem('theme', next)
+    } catch {
+      // Storage can be blocked; the theme just won't be remembered
+    }
   }
 
-  // Home calls this with the system id ('intellution', 'deltav') and the term
-  function startSearch(system, term) {
-    setSearch({ system, term, col: SEARCHES[system].defaultColumn })
-  }
-
-  return <Home onSearch={startSearch} />
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
+      <NavBar links={NAV_LINKS} user={user} theme={theme} onToggleTheme={toggleTheme} />
+      {/* flex-1 pushes the footer to the bottom on short pages. The shared max
+          width and side padding live here, so pages don't set their own.
+          min-w-0 lets wide tables scroll inside their box instead of widening the page. */}
+      <div className="flex-1 w-full min-w-0 max-w-7xl mx-auto px-6">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/search/:searchId" element={<SearchPage />} />
+          <Route path="/trend" element={<Trend theme={theme} />} />
+          <Route path="/gcc" element={<GccPage />} />
+          <Route path="/status" element={<Status user={user} />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+      <Footer />
+    </div>
+  )
 }
 
 export default App

@@ -202,7 +202,9 @@ def test_parse_unit_either_step():
 
 
 def test_parse_step_transition():
-    assert parse_step_transition(55) == 'transfer to step 55'
+    text, branch = parse_step_transition(55)
+    assert text == 'transfer to step 55'
+    assert 55 in branch.branch_to
 
 
 def test_extract_steps():

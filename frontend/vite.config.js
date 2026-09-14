@@ -7,6 +7,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    // Plotly (~4.6 MB) is its own chunk, only downloaded when a trend is opened
+    chunkSizeWarningLimit: 5000,
+  },
   server: {
     proxy: {
       // Any request starting with /api gets forwarded to Flask

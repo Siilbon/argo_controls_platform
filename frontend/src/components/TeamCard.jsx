@@ -3,19 +3,19 @@
 //   member - { name, role, email, linkedin, units: string[] }
 function TeamCard({ member }) {
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-5 flex flex-col gap-2">
+    <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-200 dark:border-gray-800 p-5 flex flex-col gap-2">
       <div>
         {member.email ? (
           <a
             href={`mailto:${member.email}`}
-            className="text-base font-semibold text-blue-700 hover:underline"
+            className="text-base font-semibold text-blue-700 dark:text-blue-400 hover:underline"
           >
             {member.name}
           </a>
         ) : (
-          <span className="text-base font-semibold text-gray-800">{member.name}</span>
+          <span className="text-base font-semibold text-gray-800 dark:text-gray-100">{member.name}</span>
         )}
-        <p className="text-sm text-gray-600">{member.role}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{member.role}</p>
       </div>
 
       {member.units.length > 0 && (
@@ -23,7 +23,7 @@ function TeamCard({ member }) {
           {member.units.map(unit => (
             <span
               key={unit}
-              className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full"
+              className="text-xs bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300 px-2 py-0.5 rounded-full"
             >
               {unit}
             </span>
@@ -36,7 +36,7 @@ function TeamCard({ member }) {
           href={member.linkedin}
           target="_blank"
           rel="noreferrer"
-          className="text-xs text-gray-400 hover:text-blue-500 mt-auto"
+          className="text-xs text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 mt-auto"
         >
           LinkedIn →
         </a>

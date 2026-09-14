@@ -14,9 +14,11 @@
 # USAGE
 #   ./dev.sh flask run               # start the Flask dev server
 #   ./dev.sh flask run --debug       # with debug mode / auto-reload
+#   ./dev.sh flask init-all          # create tables and run every load below
 #   ./dev.sh flask init-db           # create database tables
 #   ./dev.sh flask init-intellution  # load Intellution tag data
 #   ./dev.sh flask init-deltav       # load DeltaV module data
+#   ./dev.sh flask init-deltav-io    # load DeltaV IO channels from FHX exports
 #   ./dev.sh flask init-ttparser     # load Truthtable data
 #   ./dev.sh flask init-team         # load team data
 #   ./dev.sh python -c "..."         # any other python command

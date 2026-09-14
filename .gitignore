@@ -143,3 +143,5 @@ dist/
 acp_app/data/
 .vscode/
 .DS_Store
+# Log files written by LOG_FILE
+logs/

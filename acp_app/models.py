@@ -54,6 +54,7 @@ class IntellutionTag(db.Model):
 class DeltavModule(db.Model):
     __tablename__ = 'deltav_modules'
     index = db.Column(db.Integer, primary_key=True)
+    system = db.Column(db.String(64))  # 'Argo01' or 'Argo02'
     name = db.Column(db.String(64))
     desc = db.Column(db.String(256))
     area = db.Column(db.String(64))
@@ -68,6 +69,28 @@ class DeltavModule(db.Model):
 
     def __repr__(self):
         return f'<DeltaV Module {self.name}>'
+
+
+class DeltavIoChannel(db.Model):
+    __tablename__ = 'deltav_io'
+    index = db.Column(db.Integer, primary_key=True)
+    system = db.Column(db.String(64))  # 'Argo01' or 'Argo02'
+    status = db.Column(db.String(16))  # 'Spare', 'Disabled', 'No DST' or 'Assigned'
+    controller = db.Column(db.String(64))  # controller, remote IO node, gateway or CIOC
+    card_slot = db.Column(db.Integer)  # card slot, or CHARM number on a CIOC
+    position = db.Column(db.Integer)
+    tag = db.Column(db.String(64))  # device signal tag (DST)
+    description = db.Column(db.String(256))
+    enabled = db.Column(db.Boolean)
+    io_type = db.Column(db.String(16))  # 'Classic' or 'CHARMs'
+    card_definition = db.Column(db.String(64))
+    channel_definition = db.Column(db.String(64))
+    controller_assignment = db.Column(db.String(64))  # controller that owns the IO
+    subsystem = db.Column(db.String(64))
+    uploaded = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return f'<DeltaV IO {self.controller} C{self.card_slot} CH{self.position}>'
 
 
 class Truthtables(db.Model):

@@ -9,7 +9,7 @@ import pandas as pd
 bp = Blueprint('api_deltav', __name__)
 
 VALID_COLUMNS = {
-    'name', 'desc', 'area', 'node_name', 'node_type', 'faceplate', 'detail',
+    'system', 'name', 'desc', 'area', 'node_name', 'node_type', 'faceplate', 'detail',
     'default_display',
 }
 
