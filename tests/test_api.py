@@ -6,8 +6,8 @@ import pandas as pd
 import pytest
 
 from acp_app import create_app
-from acp_app.services.aspen import (parse_trend_tags, trend_period_seconds, trend_to_json,
-                                    trend_window)
+from acp_app.services.aspen import (parse_tags, parse_trend_tags, trend_period_seconds,
+                                    trend_to_json, trend_window)
 from acp_app.services.deltav import io_status
 
 
@@ -118,6 +118,12 @@ def test_parse_trend_tags_splits_and_dedupes():
     assert parse_trend_tags(['FT1, TT2', 'FT1', 'PT3']) == ['FT1', 'TT2', 'PT3']
     with pytest.raises(ValueError):
         parse_trend_tags([' , '])
+
+
+def test_parse_tags_splits_on_whitespace_and_caps_the_count():
+    assert parse_tags(['FT1\nTT2  PT3,FT1'], 5) == ['FT1', 'TT2', 'PT3']
+    with pytest.raises(ValueError, match='Look up at most 2 tags'):
+        parse_tags(['A B C'], 2)
 
 
 def test_trend_to_json_keeps_numbers_text_and_missing():
@@ -242,6 +248,37 @@ def test_aspen_search_is_capped_on_the_server(app, client, monkeypatch):
     assert 'SET MAX_ROWS 3;' in conn.executed
     assert body['total'] == 2
     assert body['truncated'] is True
+
+
+def test_aspen_node_ids(app, client, monkeypatch):
+    import acp_app.api.aspen as aspen_api
+    from mfgkit.aspen import AspenConn, encode_opcua_node_id
+    from test_aspen import FakeConn
+
+    def factory(server, **kwargs):
+        conn = FakeConn()
+        conn.queue(['Field_Number (hex)'], [('0022',)])
+        conn.queue(['REPEAT_AREA_INDEX'], [(0,)])
+        conn.queue(['NAME', 'RECID', 'DEFINITION'], [('FT1', 0x1234, 'IP_AnalogDef')])
+        conn.queue(['NAME', 'RECID'], [('IP_AnalogDef', 0xA0)])
+        return AspenConn(server, connect_fn=lambda: conn, **kwargs)
+    monkeypatch.setattr(aspen_api, 'AspenConn', factory)
+
+    body = client.get('/api/aspen/nodeid?tags=FT1,NOPE&raw=0').get_json()
+
+    assert body['data'] == [
+        {'tag': 'FT1', 'field': 'IP_INPUT_VALUE',
+         'node_id': encode_opcua_node_id(0x1234, 0x22, 0xA0, raw=False)},
+        {'tag': 'NOPE', 'field': 'IP_INPUT_VALUE', 'node_id': None},
+    ]
+    assert body['missing'] == ['NOPE']
+    assert body['raw'] is False
+
+
+def test_aspen_node_ids_reject_bad_input(client):
+    assert client.get('/api/aspen/nodeid').status_code == 400
+    res = client.get("/api/aspen/nodeid?tags=FT1&field=X';")
+    assert res.status_code == 400
 
 
 def test_aspen_routes_are_rate_limited(monkeypatch, tmp_path):

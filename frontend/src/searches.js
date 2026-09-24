@@ -85,5 +85,6 @@ export const NAV_LINKS = [
   ...Object.values(SEARCHES).map(s => ({ to: `/search/${s.id}`, label: s.title })),
   { to: '/trend', label: 'Trend' },
   { to: '/gcc', label: 'GCC' },
+  { to: '/nodeid', label: 'Node IDs' },
   { to: '/status', label: 'Status' },
 ]

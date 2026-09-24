@@ -9,6 +9,7 @@ function Home() {
   const onSearch = (id, term) => navigate(`/search/${id}?q=${encodeURIComponent(term)}`)
   const onTrend = tags => navigate(trendUrl(tags))
   const onEos = eosType => navigate(`/gcc?eos=${encodeURIComponent(eosType)}`)
+  const onNodeIds = tags => navigate(`/nodeid?tags=${encodeURIComponent(tags)}`)
 
   // useState(null) means "no data yet". Once the fetch completes it becomes
   // an array of team members. We use null (not []) so we can distinguish
@@ -68,6 +69,13 @@ function Home() {
             placeholder="EOS type, e.g. 21"
             buttonLabel="Translate"
             onSearch={onEos}
+          />
+          <SearchCard
+            title="OPC UA Node IDs"
+            description="Get the node IDs IT uses to read Aspen tags through IoTHub"
+            placeholder="e.g. FT21001"
+            buttonLabel="Get IDs"
+            onSearch={onNodeIds}
           />
         </div>
       </section>
