@@ -1,7 +1,7 @@
 """App-specific helpers on top of mfgkit.aspen.
 
-Queries live in mfgkit; this module holds the search table settings and shapes
-history for the trend API.
+Queries live in mfgkit; this module holds the search table settings, parses
+tag lists, and shapes history for the trend API.
 """
 
 import math
@@ -36,6 +36,9 @@ TREND_POINTS = 1000
 MAX_TREND_TAGS = 20
 MAX_TREND_DAYS = 366
 
+# Tags per OPC UA node ID request; each chunk of 200 costs one All_Records query
+MAX_NODEID_TAGS = 500
+
 
 def trend_window(hours=None, start=None, end=None, now=None):
     """Resolve the trend time range from either hours back or start/end strings.
@@ -63,19 +66,22 @@ def trend_period_seconds(start, end, points=TREND_POINTS):
     return max(1, math.ceil((end - start).total_seconds() / points))
 
 
-def parse_trend_tags(values):
-    """Tags from repeated and/or comma-separated query args, de-duplicated in order."""
+def parse_tags(values, max_tags, action='Look up'):
+    """Tags from repeated and/or comma- or whitespace-separated query args, de-duplicated in order."""
     tags = []
     for value in values:
-        for tag in value.split(','):
-            tag = tag.strip()
-            if tag and tag not in tags:
+        for tag in value.replace(',', ' ').split():
+            if tag not in tags:
                 tags.append(tag)
     if not tags:
         raise ValueError('Pass at least one tag')
-    if len(tags) > MAX_TREND_TAGS:
-        raise ValueError(f'Trend at most {MAX_TREND_TAGS} tags at once')
+    if len(tags) > max_tags:
+        raise ValueError(f'{action} at most {max_tags} tags at once')
     return tags
+
+
+def parse_trend_tags(values):
+    return parse_tags(values, MAX_TREND_TAGS, 'Trend')
 
 
 def trend_to_json(wide, tags):

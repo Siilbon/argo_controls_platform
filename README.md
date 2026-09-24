@@ -35,6 +35,7 @@ A React frontend backed by a Flask REST API for sharing Python utilities. Flask 
 | GET | `/api/team` | Team members list |
 | GET | `/api/aspen/<table>/<term>?col=NAME` | Aspen definition search; `table` is `analog`, `discrete`, `iogetdef` or `iogethistdef` |
 | GET | `/api/aspen/trend?tags=A,B&hours=8` | Interpolated history for trending (or `start`/`end` instead of `hours`) |
+| GET | `/api/aspen/nodeid?tags=A,B&field=IP_INPUT_VALUE&raw=1` | OPC UA node IDs IT uses to read IP21 through IoTHub; `raw=0` for the ns=2 IDs |
 | GET | `/api/aspen/status` | Aspen IO status |
 | GET | `/api/intellution/<term>?col=tag` | Intellution tag search |
 | GET | `/api/deltav/<term>?col=name` | DeltaV module search |

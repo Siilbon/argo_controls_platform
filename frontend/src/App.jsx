@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import SearchResults from './pages/SearchResults'
 import Trend from './pages/Trend'
 import Gcc from './pages/Gcc'
+import NodeIds from './pages/NodeIds'
 import Status from './pages/Status'
 import NavBar from './components/NavBar'
 import Footer from './components/Footer'
@@ -61,6 +62,13 @@ function GccPage() {
   return <Gcc key={eosType ?? ''} eosType={eosType} />
 }
 
+// /nodeid?tags=FT1,TT2&field=IP_INPUT_VALUE&raw=0
+function NodeIdsPage() {
+  const [params] = useSearchParams()
+  // Keyed so Back/Forward or a new lookup resets the form to match the URL
+  return <NodeIds key={params.toString()} />
+}
+
 function NotFound() {
   return (
     <main className="py-6 flex flex-col gap-2">
@@ -106,6 +114,7 @@ function App() {
           <Route path="/search/:searchId" element={<SearchPage />} />
           <Route path="/trend" element={<Trend theme={theme} />} />
           <Route path="/gcc" element={<GccPage />} />
+          <Route path="/nodeid" element={<NodeIdsPage />} />
           <Route path="/status" element={<Status user={user} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
