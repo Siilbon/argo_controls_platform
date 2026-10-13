@@ -1,0 +1,2 @@
+# The VBA editor's File > Import expects Windows line endings
+*.bas text eol=crlf
