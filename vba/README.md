@@ -43,5 +43,5 @@ Both helpers write a timestamped log to `gcc_batch_log.txt` in the folder you pi
 ## Notes
 
 - Upload works on whichever workbook is active, because the macros use unqualified `Range("...")` names. Each file therefore uploads from its own `RSTopic` and `CurrentUnit`.
-- `SaveToDB` refers to `Workbooks("gccdbb.xls")` by name. If you convert `gccdbb.xls`, change that reference to the new file name.
+- Converting `gccdbb.xls` breaks `SaveToDB` silently. Excel renames the names `FQI1`–`FQI3`, `SEQ1`–`SEQ10` and `TT1`–`TT8` to `FQI1_` and so on, because in `.xlsx` they are cell addresses (column FQI, row 1). `Range("FQI1")` then reads that empty cell instead of the setting, and `Workbooks("gccdbb.xls")` no longer finds the file. To fix it, replace every `Workbooks("gccdbb.xls").Worksheets(2).Range("X").Value` in `SaveToDB` with `DbSetting("X")`. `DbSetting` finds gccdbb under any extension and accepts either the old name or the underscored one, so it works before and after conversion. Keep the names Excel created; don't rename them back.
 - `flask init-ttparser` currently loads only `*.xls` files. It needs updating before it can read converted workbooks.

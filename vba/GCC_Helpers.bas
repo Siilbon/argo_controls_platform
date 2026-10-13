@@ -290,3 +290,50 @@ Private Sub ShowSummary(strTitle As String, strFolder As String, strCounts As St
     MsgBox strMessage, IIf(strFailures = "", vbInformation, vbExclamation), strTitle
 
 End Sub
+
+'Reads one of SaveToDB's settings (EOSTYPE, FQI1, SEQ1, TT1, ...) from the gccdbb workbook.
+'Use it in SaveToDB in place of Workbooks("gccdbb.xls").Worksheets(2).Range("FQI1").Value
+'
+'It copes with gccdbb being converted to .xlsx/.xlsm. Names like FQI1, SEQ1 and TT1 are cell
+'addresses in the newer format, so conversion renames them FQI1_, SEQ1_, TT1_, and
+'Range("FQI1") then silently reads the empty cell FQI1 instead of the setting.
+Public Function DbSetting(strName As String) As Variant
+
+    Dim wb As Workbook
+    Dim nm As Name
+    Dim varCandidate As Variant
+
+    Set wb = GccDbWorkbook()
+
+    On Error Resume Next
+    For Each varCandidate In Array(strName, strName & "_")
+        Set nm = wb.Names(varCandidate)
+        If nm Is Nothing Then Set nm = wb.Worksheets(2).Names(varCandidate) 'sheet-level name
+        If Not nm Is Nothing Then Exit For
+    Next varCandidate
+    On Error GoTo 0
+
+    If nm Is Nothing Then
+        Err.Raise vbObjectError + 513, "DbSetting", wb.Name & " has no setting named " & strName
+    End If
+
+    DbSetting = nm.RefersToRange.Value
+
+End Function
+
+
+'Returns the open gccdbb workbook, whether it is still .xls or has been converted.
+Private Function GccDbWorkbook() As Workbook
+
+    Dim wb As Workbook
+
+    For Each wb In Workbooks
+        If LCase$(BaseName(wb.Name)) = "gccdbb" Then
+            Set GccDbWorkbook = wb
+            Exit Function
+        End If
+    Next wb
+
+    Err.Raise vbObjectError + 514, "GccDbWorkbook", "Open gccdbb (.xls, .xlsx or .xlsm) before saving to the database"
+
+End Function
