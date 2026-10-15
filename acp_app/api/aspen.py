@@ -1,9 +1,10 @@
 from flask import Blueprint, jsonify, current_app, request
-from mfgkit.aspen import AspenConn
+from mfgkit.aspen import AspenConn, _sanitize_field
 from acp_app import limiter
 from acp_app.services.common import df_to_records
-from acp_app.services.aspen import (SEARCH_TABLES, parse_trend_tags, trend_period_seconds,
-                                    trend_to_json, trend_window)
+from acp_app.services.aspen import (MAX_NODEID_TAGS, SEARCH_TABLES, parse_tags,
+                                    parse_trend_tags, trend_period_seconds, trend_to_json,
+                                    trend_window)
 
 bp = Blueprint('api_aspen', __name__)
 
@@ -70,7 +71,38 @@ def aspen_trend():
     })
 
 
-# Flask matches the fixed routes above (status, trend) before this one
+@bp.route('/api/aspen/nodeid')
+@limiter.limit(_aspen_rate_limit)
+def aspen_node_ids():
+    """OPC UA node IDs that IT uses to read IP21 fields through IoTHub.
+
+    Query args: tags (repeat, or separate with commas or whitespace), field
+    (default IP_INPUT_VALUE) and raw (1 for the raw ns=3 ID, the default, or 0
+    for ns=2). Tags with no IP21 record come back with a null node_id.
+    """
+    field = request.args.get('field', '').strip() or 'IP_INPUT_VALUE'
+    raw = request.args.get('raw', '1') != '0'
+    try:
+        tags = parse_tags(request.args.getlist('tags'), MAX_NODEID_TAGS)
+        _sanitize_field(field)  # reject a bad field before opening a connection
+        with _connect() as conn:
+            df = conn.opcua_node_ids(tags, field=field, raw=raw)
+    except ValueError as err:  # bad tag or field name, or a field IP21 doesn't have
+        return jsonify({'error': str(err)}), 400
+    except Exception:
+        return _connection_error()
+
+    records = df_to_records(df.rename(columns={'NAME': 'tag', 'FIELD': 'field',
+                                               'NODE_ID': 'node_id'}))
+    return jsonify({
+        'data': records,
+        'missing': [r['tag'] for r in records if r['node_id'] is None],
+        'field': df['FIELD'].iloc[0],
+        'raw': raw,
+    })
+
+
+# Flask matches the fixed routes above (status, trend, nodeid) before this one
 @bp.route('/api/aspen/<table>/<search_term>')
 @limiter.limit(_aspen_rate_limit)
 def aspen_table_search(table, search_term):
