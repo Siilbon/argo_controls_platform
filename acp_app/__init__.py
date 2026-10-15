@@ -60,6 +60,10 @@ def create_app(config_name):
     # Keep dict keys in insertion order so API rows match DataFrame column order
     app.json.sort_keys = False
 
+    if app.config['URL_PREFIX']:
+        from .prefix import StripPrefix
+        app.wsgi_app = StripPrefix(app.wsgi_app, app.config['URL_PREFIX'])
+
     configure_logging(app)
 
     # Initialize extensions

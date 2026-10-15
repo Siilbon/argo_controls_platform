@@ -20,6 +20,9 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # Built React app that Flask serves (npm run build in frontend/)
     FRONTEND_DIST = os.environ.get('FRONTEND_DIST', os.path.join(basedir, 'frontend', 'dist'))
+    # The site is served under this URL prefix on the shared IIS server (see
+    # frontend/vite.config.js). Empty = served from the root.
+    URL_PREFIX = os.environ.get('URL_PREFIX', '/acp')
     # Only needed when the frontend is served from another origin (the Vite dev server)
     CORS_ORIGINS = env_list('CORS_ORIGINS')
 
