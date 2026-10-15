@@ -144,6 +144,16 @@ Every page has its own URL, so the back button, bookmarks and shared links work,
 
 `index.html` is sent with `Cache-Control: no-cache` so browsers pick up a new deploy; the hashed files in `dist/assets/` can be cached. Plotly is split into its own file and only downloads when someone opens a trend.
 
+### Served under /acp
+
+The site lives at `/acp` on the shared IIS server, which also hosts the Control Plan
+Platform at `/`. Create ACP as an IIS **application** with alias `acp` (physical path = this
+folder). IIS strips `/acp` before Flask sees a request, so the backend routes are still
+`/api/...` and `/`; only the browser-facing URLs carry the prefix. The frontend gets it from
+`base` in `frontend/vite.config.js` (`/acp/`), which also drives the router `basename` and the
+`/api` calls (`withBase` in `src/api.js`). For local dev open http://localhost:5173/acp/.
+To host somewhere else, change `BASE` in `vite.config.js` and rebuild.
+
 ## CLI Commands
 
 All commands are run via `dev.sh` to ensure the environment is loaded:
