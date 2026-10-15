@@ -1,8 +1,12 @@
 // Small helpers for talking to the Flask API.
 
+// The app is served under a sub-path (Vite's base, /acp/): '/api/team' -> '/acp/api/team'
+export const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
+export const withBase = path => BASE_PATH + path
+
 // Fetch JSON, turning the API's { error } replies into thrown errors
 export async function fetchJson(url, options) {
-  const res = await fetch(url, options)
+  const res = await fetch(withBase(url), options)
   const data = await res.json().catch(() => null)
   if (!res.ok) throw new Error(data?.error ?? `HTTP ${res.status}`)
   return data

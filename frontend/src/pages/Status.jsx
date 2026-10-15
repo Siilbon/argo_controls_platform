@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { CircleCheck, CircleX, LoaderCircle, RefreshCw, TriangleAlert } from 'lucide-react'
-import { STALE_DAYS, daysSince } from '../api'
+import { STALE_DAYS, daysSince, withBase } from '../api'
 
 // Friendly names and the command that reloads each dataset from /api/health
 const DATASETS = {
@@ -14,7 +14,7 @@ const DATASETS = {
 // /api/health answers 503 with a JSON body when something is down, so read the
 // body whatever the status code rather than treating 503 as a failed request
 async function fetchHealth(url) {
-  const res = await fetch(url)
+  const res = await fetch(withBase(url))
   const data = await res.json().catch(() => null)
   if (!data) throw new Error(`HTTP ${res.status}`)
   return { ...data, checkedAt: new Date().toLocaleTimeString() }
