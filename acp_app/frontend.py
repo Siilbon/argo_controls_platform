@@ -23,6 +23,11 @@ def serve(path):
         # send_from_directory refuses paths that escape dist
         return send_from_directory(dist, path)
 
+    # A missing build file is a 404, not the app's HTML: otherwise the browser
+    # reports a confusing MIME type error instead of a missing file.
+    if path.startswith('assets/'):
+        abort(404)
+
     if not (dist / 'index.html').is_file():
         return 'Frontend not built. Run "npm run build" in frontend/.', 404
 
