@@ -56,6 +56,12 @@ function buildFigure(trend, stacked, theme) {
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: { color: textColor, size: 12 },
     hovermode: 'x unified',
+    // Plotly's hover box defaults to a white background, so set it per theme
+    hoverlabel: {
+      bgcolor: dark ? '#1f2937' : '#ffffff',
+      bordercolor: dark ? '#4b5563' : '#d1d5db',
+      font: { color: dark ? '#f3f4f6' : '#111827' },
+    },
     showlegend: true,
     legend: { orientation: 'h', y: 1.08 },
     xaxis: { ...axisStyle, type: 'date' },
